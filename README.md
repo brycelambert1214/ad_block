@@ -6,7 +6,7 @@ A Python-based computer vision system for detecting and replacing full-screen ad
 
 Full documentation is available here:
 
-https://yourusername.github.io/ad-block/
+https://github.com/brycelambert1214/ad_block
 
 ## Overview
 
@@ -47,7 +47,7 @@ CaptureManager
 Clone the repository:
 
 ```bash
-git clone https://github.com/<username>/ad-block.git
+git clone https://github.com/brycelambert1214/ad_block
 ```
 
 Navigate into the project:
