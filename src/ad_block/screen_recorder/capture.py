@@ -1,3 +1,4 @@
+# TODO: Update the module level doc string
 """
 This is the method used for capturing all information from the screen.
 
@@ -53,17 +54,14 @@ Examples
 """
 
 import threading
-import time
-
 import mss
 import numpy as np
-
-from .settings import RecorderSettings
 from .ring_buffer import RingBuffer
 from . import exceptions as ex
 
 
 class CaptureThread:
+    # TODO: Update the class level doc string
     """
     Capture all screen related information.
 
@@ -108,10 +106,10 @@ class CaptureThread:
     def __init__(
         self,
         buffer: RingBuffer,
-        settings: RecorderSettings
+        monitor_idx: int
     ):
-        self.buffer = buffer
-        self.settings = settings
+        self._buffer = buffer
+        self._monitor_idx = monitor_idx
 
         self._running = threading.Event()
         self._thread: threading.Thread | None = None
@@ -122,60 +120,9 @@ class CaptureThread:
         self._runtime = 0.0
 
     @property
-    def settings(self) -> RecorderSettings:
-        """Current recorder configuration."""
-        return self._settings
-
-    @settings.setter
-    def settings(self, value: RecorderSettings):
-        if not isinstance(value, RecorderSettings):
-            raise ex.InvalidType(
-                "settings must be a RecorderSettings object."
-            )
-
-        self._settings = value
-
-    @property
     def running(self) -> bool:
         """Current state of the capture thread."""
         return self._running.is_set()
-
-    @property
-    def tot_count(self) -> int:
-        """
-       Total frames recorded.
-
-        Cannot be accessed while recording is active.
-        """
-        if self.running:
-            raise ex.RecordingInProgress(
-                "Cannot get total count while recording is in progress."
-            )
-
-        return self._tot_count
-
-    @property
-    def runtime(self) -> float:
-        """
-        Total recording runtime.
-
-        Cannot be accessed while recording is active.
-        """
-        if self.running:
-            raise ex.RecordingInProgress(
-                "Cannot get runtime while recording is in progress."
-            )
-
-        return self._runtime
-
-    @property
-    def fps(self) -> float:
-        """Average achieved frames per second."""
-
-        if self._runtime == 0:
-            return 0.0
-
-        return self._tot_count / self._runtime
 
     @property
     def thread(self) -> threading.Thread | None:
@@ -187,22 +134,19 @@ class CaptureThread:
 
         with mss.MSS() as sct:
 
-            if self.settings.monitor >= len(sct.monitors):
+            if self._monitor_idx >= len(sct.monitors):
                 raise ex.InvalidMonitorIndex(
-                    f"Monitor {self.settings.monitor} does not exist. "
+                    f"Monitor {self._monitor_idx} does not exist. "
                     f"Available monitors: {len(sct.monitors) - 1}"
                 )
 
-            self._monitor = sct.monitors[self.settings.monitor]
+            self._monitor = sct.monitors[self._monitor_idx]
 
     def start_capture(self) -> None:
         """Start the screen capture thread."""
 
         if self.running:
             return
-
-        self._tot_count = 0
-        self._runtime = 0.0
 
         self._validate_monitor()
 
@@ -237,9 +181,6 @@ class CaptureThread:
         to the RingBuffer.
         """
 
-        count = 0
-        start = time.perf_counter()
-
         try:
 
             with mss.MSS() as sct:
@@ -252,21 +193,12 @@ class CaptureThread:
                         screenshot
                     )[:, :, :3]
 
-                    self.buffer.add(frame)
-
-                    count += 1
+                    self._buffer.add(frame)
 
         except Exception:
             self._running.clear()
             raise
 
         finally:
-
-            self._tot_count = count
-
-            self._runtime = (
-                time.perf_counter() - start
-            )
-
             self._running.clear()
             self._monitor = None

@@ -56,32 +56,6 @@ Navigate into the project:
 cd ad-block
 ```
 
-Create a virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate the environment:
-
-### Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-### Linux/macOS
-
-```bash
-source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install -e .
-```
-
 ## Testing
 
 The project uses `pytest` for testing.

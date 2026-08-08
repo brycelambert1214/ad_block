@@ -1,3 +1,4 @@
+# TODO: Update the module level doc string
 """
 Validated configuration for ReplayRecorder.
 
@@ -35,6 +36,7 @@ from . import exceptions as ex
 
 
 class RecorderSettings:
+    # TODO: Update the class level doc string
     """
     Immutable configuration for ReplayRecorder.
     
@@ -103,6 +105,7 @@ class RecorderSettings:
     @property
     def num_frames(self) -> int:
         """Number of frames required for the replay buffer."""
+        print(max(1, int(self.expected_fps * self.replay_seconds)))
         return max(1, int(self.expected_fps * self.replay_seconds))
 
     def replace(self, expected_fps: int | None = None,

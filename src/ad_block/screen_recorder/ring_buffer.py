@@ -1,3 +1,4 @@
+# TODO: Update the module level doc string
 """
 This file is in charge of maintaining the buffered information.
 
@@ -49,6 +50,7 @@ import numpy as np
 
 
 class RingBuffer:
+    # TODO: Update the class level doc string
     """
     Keeps track of the current and recent screens.
     
@@ -122,11 +124,9 @@ class RingBuffer:
         with self._lock:
             self._capacity = capacity
             self._frames = deque(self._frames, maxlen=self._capacity)
-
     
     def clear(self) -> None:
         """Remove all stored frames."""
-
         with self._lock:
             self._frames.clear()
 

@@ -3,11 +3,11 @@ import time
 
 if __name__ == "__main__":
 
-    settings = RecorderSettings(expected_fps=30, replay_seconds=5, monitor=1)
-    print(settings)
-
+    replay_seconds = 4
+    settings = RecorderSettings(expected_fps=31, replay_seconds=replay_seconds,
+                                monitor=1)
     try:
-        recorder = ReplayRecorder()
+        recorder = ReplayRecorder(settings)
     except ScreenRecordingError as err:
         print(err)
         raise Exception("ScreenRecordingError: " + str(err))
@@ -15,14 +15,15 @@ if __name__ == "__main__":
     print(recorder.running)
     recorder.start()
     print((recorder.running))
-    time.sleep(3)
+    time.sleep(replay_seconds)
 
     recorder.stop()
 
     stats = recorder.stats()
     print(stats.fps)
-    print(stats.runtime)
+    print(stats.duration)
     print(stats.total_frames)
 
     frames = recorder.frames()
+    print(len(frames))
     latest = recorder.latest()

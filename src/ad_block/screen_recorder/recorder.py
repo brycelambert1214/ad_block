@@ -1,3 +1,4 @@
+# TODO: Update the module level doc string
 """
 Pythonic based screen recording.
 
@@ -54,29 +55,13 @@ Examples
 >>> frames = recorder.frames()  # output: List of all frames in the buffer
 >>> latest_frame = recorder.latest()  # output: Most recent frame
 """
-from .ring_buffer import RingBuffer
-from .capture import CaptureThread
 from .settings import RecorderSettings
 from .capture_manager import Manager
 from . import exceptions as ex
 import numpy as np
-from dataclasses import dataclass
-
-
-@dataclass(frozen=True)
-class CaptureStats:
-    total_frames: int
-    runtime: float
-
-    @property
-    def fps(self):
-        """Return the measured fps."""
-        if self.runtime == 0:
-            return 0
-        return self.total_frames / self.runtime
-
 
 class ReplayRecorder:
+    # TODO: Update the class level doc string
     """
     Class for recording the current screen information.
 
@@ -114,10 +99,10 @@ class ReplayRecorder:
     """
 
     def __init__(self, settings: RecorderSettings = None):
-        self._settings = settings or RecorderSettings()
+        if settings is None:
+            settings = RecorderSettings()
+        self.settings = settings
         self._manager = Manager(settings)
-        self._buffer = RingBuffer(self._settings.num_frames)
-        self._capture = CaptureThread(self._buffer, self._settings)
 
     @property
     def settings(self) -> RecorderSettings:
@@ -131,7 +116,7 @@ class ReplayRecorder:
     @property
     def running(self) -> bool:
         """Property of currently screen recording."""
-        return self._capture.running
+        return self._manager.running
 
     def _configure(self, settings: RecorderSettings) -> None:
         """Apply a new recorder configuration."""
@@ -140,6 +125,10 @@ class ReplayRecorder:
             raise ex.InvalidType(
                 "settings must be a RecorderSettings object."
             )
+
+        if not hasattr(self, '_buffer'):
+            self._settings = settings
+            return
 
         if self.running:
             raise ex.RecordingInProgress()
@@ -156,24 +145,23 @@ class ReplayRecorder:
         """Start screen recording."""
         if self.running:
             raise ex.RecordingInProgress()
-        self._capture.start_capture()
+        self._manager.start()
 
     def stop(self) -> None:
         """Stop screen recording."""
         if not self.running:
             return
-        self._capture.stop_capture()
+        self._manager.stop()
 
     def latest(self) -> np.ndarray | None:
         """Return the most recent frame."""
-        return self._buffer.latest()
+        return self._manager.latest()
 
     def frames(self) -> list[np.ndarray]:
         """Return all frames in the buffer."""
-        return self._buffer.snapshot()
+        return self._manager.frames()
 
-    def stats(self) -> CaptureStats:
+    def stats(self) -> object:
         """Return screen recording stats."""
-        return CaptureStats(total_frames=self._capture.tot_count,
-                              runtime=self._capture.runtime)
+        return self._manager.final_stats()
 
