@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ad_block.screen_recorder.recorder &mdash; ad_block 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ad_block
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ad_block</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ad_block.screen_recorder.recorder</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ad_block.screen_recorder.recorder</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Pythonic based screen recording.</span>
+
+<span class="sd">Description</span>
+<span class="sd">-----------</span>
+<span class="sd">This module provides a high-level interface for recording the screen,</span>
+<span class="sd">retrieving replay frames, and configuring the recorder.</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">ReplayRecorder</span>
+<span class="sd">    Api for recording the current screen information.</span>
+
+<span class="sd">Dependencies</span>
+<span class="sd">------------</span>
+<span class="sd">RingBuffer</span>
+<span class="sd">    Stores the most recent captured frames.</span>
+
+<span class="sd">CaptureThread</span>
+<span class="sd">    Performs screen capture in a background thread.</span>
+
+<span class="sd">RecorderSettings</span>
+<span class="sd">    Provides validated, immutable recorder configuration.</span>
+
+<span class="sd">exceptions</span>
+<span class="sd">    Custom exceptions raised by the recorder.</span>
+
+<span class="sd">numpy</span>
+<span class="sd">    Represents captured image frames as ndarrays.</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; from ad_block import ReplayRecorder, RecorderSettings</span>
+<span class="sd">&gt;&gt;&gt; import time</span>
+
+<span class="sd">&gt;&gt;&gt; # Create a ReplayRecorder instance with and without custom settings</span>
+<span class="sd">&gt;&gt;&gt; recorder = ReplayRecorder()</span>
+<span class="sd">&gt;&gt;&gt; settings = RecorderSettings(fps=30, replay_seconds=5, monitor=1)</span>
+<span class="sd">&gt;&gt;&gt; recorder.settings = settings</span>
+<span class="sd">&gt;&gt;&gt; recorder.settings  # output: RecorderSettings(fps=30, replay_seconds=5, monitor=1)</span>
+
+<span class="sd">&gt;&gt;&gt; # Start and stop recording</span>
+<span class="sd">&gt;&gt;&gt; recorder.running  # output: False</span>
+<span class="sd">&gt;&gt;&gt; recorder.start()</span>
+<span class="sd">&gt;&gt;&gt; recorder.running  # output: True</span>
+<span class="sd">&gt;&gt;&gt; time.sleep(3)  # Record for 3 seconds</span>
+<span class="sd">&gt;&gt;&gt; recorder.stop()</span>
+<span class="sd">&gt;&gt;&gt; recorder.running  # output: False</span>
+
+<span class="sd">&gt;&gt;&gt; # Retrieve recording statistics and frames</span>
+<span class="sd">&gt;&gt;&gt; recorder.runtime_fps()  # output: Current frames per second</span>
+<span class="sd">&gt;&gt;&gt; recorder.runtime()  # output: Total runtime of the recording</span>
+<span class="sd">&gt;&gt;&gt; recorder.total_frames()  # output: Total number of frames recorded</span>
+<span class="sd">&gt;&gt;&gt; frames = recorder.frames()  # output: List of all frames in the buffer</span>
+<span class="sd">&gt;&gt;&gt; latest_frame = recorder.latest()  # output: Most recent frame</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ring_buffer</span><span class="w"> </span><span class="kn">import</span> <span class="n">RingBuffer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.capture</span><span class="w"> </span><span class="kn">import</span> <span class="n">CaptureThread</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecorderSettings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.capture_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">Manager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span> <span class="k">as</span> <span class="n">ex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CaptureStats</span><span class="p">:</span>
+    <span class="n">total_frames</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">runtime</span><span class="p">:</span> <span class="nb">float</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the measured fps.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_frames</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">runtime</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ReplayRecorder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for recording the current screen information.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    settings : RecorderSettings | None</span>
+<span class="sd">        Configuration for the recorder, including fps, replay_seconds, and monitor index.</span>
+<span class="sd">    buffer : RingBuffer</span>
+<span class="sd">        Thread-safe ring buffer for storing captured frames.</span>
+<span class="sd">    capture : CaptureThread</span>
+<span class="sd">        Thread responsible for capturing screen frames and storing them in the buffer.</span>
+<span class="sd">    running: bool</span>
+<span class="sd">        State of if the system is currently recording the screen.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(settings: RecorderSettings = None)</span>
+<span class="sd">        Initilize the ReplayRecorder with specified RecorderSettings</span>
+<span class="sd">    start() -&gt; None</span>
+<span class="sd">        Start the screen recording process.</span>
+<span class="sd">    stop() -&gt; None</span>
+<span class="sd">        Stop the screen recording process.</span>
+<span class="sd">    _configure() -&gt; None</span>
+<span class="sd">        Configure the settings throughout the system</span>
+<span class="sd">    latest() -&gt; np.ndarray | None</span>
+<span class="sd">        Return the latest frame</span>
+<span class="sd">    frames() -&gt; list[np.ndarray]</span>
+<span class="sd">        Return the set of all buffered frames.</span>
+<span class="sd">    runtime_fps() -&gt; float</span>
+<span class="sd">        The frames per second of the whole capture time.</span>
+<span class="sd">    runtime() -&gt; float</span>
+<span class="sd">        The time of the whole screen recording.</span>
+<span class="sd">    total_frames() -&gt; int</span>
+<span class="sd">        The total number of frames recorded.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReplayRecorder.__init__">
+<a class="viewcode-back" href="../../../api/recorder.html#ad_block.screen_recorder.recorder.ReplayRecorder.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">RecorderSettings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span> <span class="o">=</span> <span class="n">settings</span> <span class="ow">or</span> <span class="n">RecorderSettings</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">RingBuffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="o">.</span><span class="n">num_frames</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capture</span> <span class="o">=</span> <span class="n">CaptureThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RecorderSettings</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property for the current recorder configuration.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span>
+
+    <span class="nd">@settings</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">RecorderSettings</span> <span class="o">|</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="n">value</span> <span class="ow">or</span> <span class="n">RecorderSettings</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">running</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Property of currently screen recording.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_capture</span><span class="o">.</span><span class="n">running</span>
+
+<div class="viewcode-block" id="ReplayRecorder._configure">
+<a class="viewcode-back" href="../../../api/recorder.html#ad_block.screen_recorder.recorder.ReplayRecorder._configure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">settings</span><span class="p">:</span> <span class="n">RecorderSettings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Apply a new recorder configuration.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">RecorderSettings</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">InvalidType</span><span class="p">(</span>
+                <span class="s2">&quot;settings must be a RecorderSettings object.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">RecordingInProgress</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">settings</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">num_frames</span><span class="p">)</span>
+        <span class="c1"># self.capture.fps = settings.fps</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_settings</span> <span class="o">=</span> <span class="n">settings</span></div>
+
+
+<div class="viewcode-block" id="ReplayRecorder.start">
+<a class="viewcode-back" href="../../../api/recorder.html#ad_block.screen_recorder.recorder.ReplayRecorder.start">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start screen recording.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">RecordingInProgress</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capture</span><span class="o">.</span><span class="n">start_capture</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ReplayRecorder.stop">
+<a class="viewcode-back" href="../../../api/recorder.html#ad_block.screen_recorder.recorder.ReplayRecorder.stop">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop screen recording.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">running</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_capture</span><span class="o">.</span><span class="n">stop_capture</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ReplayRecorder.latest">
+<a class="viewcode-back" href="../../../api/recorder.html#ad_block.screen_recorder.recorder.ReplayRecorder.latest">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">latest</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the most recent frame.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">latest</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ReplayRecorder.frames">
+<a class="viewcode-back" href="../../../api/recorder.html#ad_block.screen_recorder.recorder.ReplayRecorder.frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all frames in the buffer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CaptureStats</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return screen recording stats.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">CaptureStats</span><span class="p">(</span><span class="n">total_frames</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_capture</span><span class="o">.</span><span class="n">tot_count</span><span class="p">,</span>
+                              <span class="n">runtime</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_capture</span><span class="o">.</span><span class="n">runtime</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Bryce Lambert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

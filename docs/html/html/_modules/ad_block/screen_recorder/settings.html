@@ -1,0 +1,297 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ad_block.screen_recorder.settings &mdash; ad_block 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ad_block
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ad_block</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ad_block.screen_recorder.settings</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ad_block.screen_recorder.settings</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Validated configuration for ReplayRecorder.</span>
+
+<span class="sd">Description</span>
+<span class="sd">-----------</span>
+<span class="sd">This module validates the settings needed for the ReplayRecorder class.</span>
+<span class="sd">It ensures that the provided values for frames per second (fps), replay</span>
+<span class="sd">duration (replay_seconds), and monitor index (monitor) are of the correct</span>
+<span class="sd">type and within acceptable ranges. If any of the values are invalid, it</span>
+<span class="sd">raises appropriate exceptions to inform the user of the issue.</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">RecorderSettings</span>
+<span class="sd">    Immutable configuration for ReplayRecorder, with validation for fps,</span>
+<span class="sd">    replay_seconds, and monitor index.</span>
+
+<span class="sd">Dependencies</span>
+<span class="sd">------------</span>
+<span class="sd">config</span>
+<span class="sd">    Default configuration values.</span>
+
+<span class="sd">exceptions</span>
+<span class="sd">    Package-specific exceptions used for input validation.</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; from ad_block.screen_recorder.settings import RecorderSettings</span>
+<span class="sd">&gt;&gt;&gt; settings = RecorderSettings(fps=30, replay_seconds=5, monitor=1)</span>
+<span class="sd">&gt;&gt;&gt; print(settings)  # output: RecorderSettings(fps=30, replay_seconds=5, monitor=1)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_EXPECTED_FPS</span><span class="p">,</span> <span class="n">DEFAULT_REPLAY_SECONDS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span> <span class="k">as</span> <span class="n">ex</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">RecorderSettings</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Immutable configuration for ReplayRecorder.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    expected_fps : int</span>
+<span class="sd">        Frames per second for screen capture. Must be a positive integer.</span>
+<span class="sd">    replay_seconds : float | int</span>
+<span class="sd">        Number of seconds stored in the replay buffer. Must be a positive number.</span>
+<span class="sd">    monitor : int</span>
+<span class="sd">        Monitor index used for capture. Must be a positive integer.</span>
+<span class="sd">    num_frames : int</span>
+<span class="sd">        Number of frames required for the replay buffer, calculated as fps * replay_seconds.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    __init__(expected_fps: int = DEFAULT_FPS,</span>
+<span class="sd">      replay_seconds: float | int = DEFAULT_REPLAY_SECONDS, monitor: int = 1)</span>
+<span class="sd">        Initialize the RecorderSettings with validated values.</span>
+<span class="sd">    __repr__() -&gt; str</span>
+<span class="sd">        Return a string representation of the settings.</span>
+<span class="sd">    __eq__(other: object) -&gt; bool</span>
+<span class="sd">        Check equality with another RecorderSettings object.</span>
+<span class="sd">    replace(fps: int | None = None, replay_seconds: float | None = None, monitor: int | None = None) -&gt; &quot;RecorderSettings&quot;</span>
+<span class="sd">        Create a new settings object with selected values replaced.</span>
+<span class="sd">    to_dict() -&gt; dict[str, object]</span>
+<span class="sd">        Return a dictionary representation of the settings.</span>
+<span class="sd">    replace(fps: int | None = None, replay_seconds: float | None = None, monitor: int | None = None) -&gt; &quot;RecorderSettings&quot;</span>
+<span class="sd">        Create a new settings object with selected values replaced.</span>
+<span class="sd">    _validate_fps(value: int) -&gt; None</span>
+<span class="sd">        Validate frames per second.</span>
+<span class="sd">    _validate_replay_seconds(value: float) -&gt; None</span>
+<span class="sd">        Validate replay duration.</span>
+<span class="sd">    _validate_monitor(value: int) -&gt; None</span>
+<span class="sd">        Validate monitor index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;_expected_fps&quot;</span><span class="p">,</span> <span class="s2">&quot;_replay_seconds&quot;</span><span class="p">,</span> <span class="s2">&quot;_monitor&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RecorderSettings.__init__">
+<a class="viewcode-back" href="../../../api/settings.html#ad_block.screen_recorder.settings.RecorderSettings.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_EXPECTED_FPS</span><span class="p">,</span>
+                  <span class="n">replay_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_REPLAY_SECONDS</span><span class="p">,</span>
+                    <span class="n">monitor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_expected_fps</span><span class="p">(</span><span class="n">expected_fps</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_replay_seconds</span><span class="p">(</span><span class="n">replay_seconds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_monitor</span><span class="p">(</span><span class="n">monitor</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_expected_fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">expected_fps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_replay_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">replay_seconds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">monitor</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Monitor index used for capture.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">expected_fps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Frames per second for screen capture.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expected_fps</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replay_seconds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of seconds stored in the replay buffer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replay_seconds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of frames required for the replay buffer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_fps</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">replay_seconds</span><span class="p">))</span>
+
+<div class="viewcode-block" id="RecorderSettings.replace">
+<a class="viewcode-back" href="../../../api/settings.html#ad_block.screen_recorder.settings.RecorderSettings.replace">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expected_fps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">replay_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">monitor</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;RecorderSettings&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new settings object with selected values replaced.</span>
+
+<span class="sd">        The original settings object is not modified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">RecorderSettings</span><span class="p">(</span>
+            <span class="n">expected_fps</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_fps</span> <span class="k">if</span> <span class="n">expected_fps</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">expected_fps</span><span class="p">),</span>
+            <span class="n">replay_seconds</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">replay_seconds</span> <span class="k">if</span> <span class="n">replay_seconds</span> <span class="ow">is</span> <span class="kc">None</span>
+                                    <span class="k">else</span> <span class="n">replay_seconds</span><span class="p">),</span>
+            <span class="n">monitor</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="k">if</span> <span class="n">monitor</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">monitor</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_expected_fps</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate frames per second.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">InvalidType</span><span class="p">(</span><span class="s2">&quot;expected_fps must be an integer.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">NegativeValue</span><span class="p">(</span><span class="s2">&quot;expected_fps must be greater than zero.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_replay_seconds</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate replay duration.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">InvalidType</span><span class="p">(</span><span class="s2">&quot;replay_seconds must be numeric.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">NegativeValue</span><span class="p">(</span><span class="s2">&quot;replay_seconds must be greater than zero.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_monitor</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate monitor index.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">InvalidType</span><span class="p">(</span><span class="s2">&quot;Monitor must be an integer.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ex</span><span class="o">.</span><span class="n">InvalidMonitorIndex</span><span class="p">(</span><span class="s2">&quot;Monitor must be greater than zero.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RecorderSettings.__repr__">
+<a class="viewcode-back" href="../../../api/settings.html#ad_block.screen_recorder.settings.RecorderSettings.__repr__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representation of the settings.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;RecorderSettings(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;expected_fps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_fps</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;replay_seconds=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">replay_seconds</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;monitor=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RecorderSettings.__eq__">
+<a class="viewcode-back" href="../../../api/settings.html#ad_block.screen_recorder.settings.RecorderSettings.__eq__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check equality with another RecorderSettings object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">RecorderSettings</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected_fps</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">expected_fps</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">replay_seconds</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">replay_seconds</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">monitor</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RecorderSettings.to_dict">
+<a class="viewcode-back" href="../../../api/settings.html#ad_block.screen_recorder.settings.RecorderSettings.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a dictionary representation of the settings.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;expected_fps&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected_fps</span><span class="p">,</span>
+            <span class="s2">&quot;replay_seconds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">replay_seconds</span><span class="p">,</span>
+            <span class="s2">&quot;num_frames&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_frames</span><span class="p">,</span>
+            <span class="s2">&quot;monitor&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">monitor</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Bryce Lambert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

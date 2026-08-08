@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ad_block.screen_recorder.exceptions &mdash; ad_block 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            ad_block
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../developer/index.html">Developer Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">ad_block</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ad_block.screen_recorder.exceptions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ad_block.screen_recorder.exceptions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for all screen_recorder custom exceptions.</span>
+
+<span class="sd">Descriptions</span>
+<span class="sd">------------</span>
+<span class="sd">This module defines the exception hierarchy used throughout the</span>
+<span class="sd">screen recorder package. Each exception belongs to one of three categories:</span>
+<span class="sd"> configuration errors, state errors, or capture errors.</span>
+
+<span class="sd">Hierarchy</span>
+<span class="sd">---------</span>
+<span class="sd">ScreenRecordingError</span>
+<span class="sd">    - ConfigurationError</span>
+<span class="sd">        - NegativeValue</span>
+<span class="sd">        - InvalidType</span>
+<span class="sd">        - InvalidMonitorIndex</span>
+<span class="sd">    - StateError</span>
+<span class="sd">        - RecordingInProgress</span>
+<span class="sd">    - CaptureError</span>
+<span class="sd">    </span>
+
+<span class="sd">General Attributes</span>
+<span class="sd">------------------</span>
+<span class="sd">- message: Human-readable description of the error.</span>
+<span class="sd">- level: Suggested logging level associated with the exception.</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+<span class="sd">&gt;&gt;&gt; from ad_block.screen_recorder import exceptions as ex</span>
+
+<span class="sd">&gt;&gt;&gt; try:</span>
+<span class="sd">&gt;&gt;&gt;     raise ex.NegativeValue(message=&quot;Test the negative value error.&quot;)</span>
+<span class="sd">&gt;&gt;&gt; except ex.ScreenRecordingError as err:</span>
+<span class="sd">&gt;&gt;&gt;     print(err.level)  # output: 40</span>
+<span class="sd">&gt;&gt;&gt;     print(err)  # output: &#39;Test the negative value error.&#39;</span>
+
+<span class="sd">&gt;&gt;&gt; try:</span>
+<span class="sd">&gt;&gt;&gt;     raise ex.NegativeValue(message=&quot;Test the negative value error.&quot;)</span>
+<span class="sd">&gt;&gt;&gt; except ex.Configuration as err:</span>
+<span class="sd">&gt;&gt;&gt;     print(err.level)  # output: 40</span>
+<span class="sd">&gt;&gt;&gt;     print(err)  # output: &#39;Test the negative value error.&#39;</span>
+
+<span class="sd">&gt;&gt;&gt; try:</span>
+<span class="sd">&gt;&gt;&gt;     raise ex.NegativeValue(message=&quot;Test the negative value error.&quot;)</span>
+<span class="sd">&gt;&gt;&gt; except ValueError as err:</span>
+<span class="sd">&gt;&gt;&gt;     print(err.level)  # output: 40</span>
+<span class="sd">&gt;&gt;&gt;     print(err)  # output: &#39;Test the negative value error.&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+
+<div class="viewcode-block" id="ScreenRecordingError">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.ScreenRecordingError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScreenRecordingError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all screen recording exceptions.&quot;&quot;&quot;</span></div>
+
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">#                           Configuration Error                                #</span>
+<span class="c1">################################################################################</span>
+
+<div class="viewcode-block" id="ConfigurationError">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.ConfigurationError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConfigurationError</span><span class="p">(</span><span class="n">ScreenRecordingError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all configuration exceptions.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="NegativeValue">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.NegativeValue">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NegativeValue</span><span class="p">(</span><span class="n">ConfigurationError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unsupported negative value in system configuration.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                 <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Negative values are not allowed.&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="InvalidType">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.InvalidType">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidType</span><span class="p">(</span><span class="n">ConfigurationError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Invalid type during system configuration&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                 <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Invalid type provided.&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+<div class="viewcode-block" id="InvalidMonitorIndex">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.InvalidMonitorIndex">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidMonitorIndex</span><span class="p">(</span><span class="n">ConfigurationError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Unrecognized monitor in system configuration.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                 <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Invalid monitor index provided.&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">#                              Runtime Error                                   #</span>
+<span class="c1">################################################################################</span>
+
+<div class="viewcode-block" id="StateError">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.StateError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StateError</span><span class="p">(</span><span class="n">ScreenRecordingError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all runtime exceptions.&quot;&quot;&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="RecordingInProgress">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.RecordingInProgress">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RecordingInProgress</span><span class="p">(</span><span class="n">StateError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for all errors caused by current screen recording.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">ERROR</span><span class="p">,</span>
+                 <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="o">=</span><span class="s2">&quot;Recording in progress.&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">level</span> <span class="o">=</span> <span class="n">level</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">message</span></div>
+
+
+
+<div class="viewcode-block" id="CaptureError">
+<a class="viewcode-back" href="../../../api/exceptions.html#ad_block.screen_recorder.exceptions.CaptureError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CaptureError</span><span class="p">(</span><span class="n">ScreenRecordingError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for all capture based exceptions.&quot;&quot;&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Bryce Lambert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

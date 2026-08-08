@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recorder Settings &mdash; ad_block 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Exceptions" href="exceptions.html" />
+    <link rel="prev" title="ReplayRecorder" href="recorder.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ad_block
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="recorder.html">ReplayRecorder</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Recorder Settings</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-ad_block.screen_recorder.settings">Module Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#recordersettings">RecorderSettings</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html">Exceptions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../developer/index.html">Developer Documentation</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ad_block</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Recorder Settings</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/settings.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="recorder-settings">
+<h1>Recorder Settings<a class="headerlink" href="#recorder-settings" title="Link to this heading"></a></h1>
+<section id="module-ad_block.screen_recorder.settings">
+<span id="module-documentation"></span><h2>Module Documentation<a class="headerlink" href="#module-ad_block.screen_recorder.settings" title="Link to this heading"></a></h2>
+<p>Validated configuration for ReplayRecorder.</p>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Link to this heading"></a></h3>
+<p>This module validates the settings needed for the ReplayRecorder class.
+It ensures that the provided values for frames per second (fps), replay
+duration (replay_seconds), and monitor index (monitor) are of the correct
+type and within acceptable ranges. If any of the values are invalid, it
+raises appropriate exceptions to inform the user of the issue.</p>
+</section>
+<section id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>RecorderSettings</dt><dd><p>Immutable configuration for ReplayRecorder, with validation for fps,
+replay_seconds, and monitor index.</p>
+</dd>
+</dl>
+</section>
+<section id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>config</dt><dd><p>Default configuration values.</p>
+</dd>
+<dt>exceptions</dt><dd><p>Package-specific exceptions used for input validation.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ad_block.screen_recorder.settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecorderSettings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">settings</span> <span class="o">=</span> <span class="n">RecorderSettings</span><span class="p">(</span><span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">replay_seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">monitor</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>  <span class="c1"># output: RecorderSettings(fps=30, replay_seconds=5, monitor=1)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="recordersettings">
+<h2>RecorderSettings<a class="headerlink" href="#recordersettings" title="Link to this heading"></a></h2>
+<p>Immutable configuration for ReplayRecorder.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>fps<span class="classifier">int</span></dt><dd><p>Frames per second for screen capture.</p>
+</dd>
+<dt>replay_seconds<span class="classifier">float | int</span></dt><dd><p>Number of seconds stored in the replay buffer.</p>
+</dd>
+<dt>monitor<span class="classifier">int</span></dt><dd><p>Monitor index used for capture.</p>
+</dd>
+</dl>
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading"></a></h3>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.replay_seconds">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">replay_seconds</span></span><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.replay_seconds" title="Link to this definition"></a></dt>
+<dd><p>Number of seconds stored in the replay buffer.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.monitor">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">monitor</span></span><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.monitor" title="Link to this definition"></a></dt>
+<dd><p>Monitor index used for capture.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.num_frames">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">num_frames</span></span><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.num_frames" title="Link to this definition"></a></dt>
+<dd><p>Number of frames required for the replay buffer.</p>
+</dd></dl>
+
+</section>
+<section id="methods">
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h3>
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.__init__">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ad_block/screen_recorder/settings.html#RecorderSettings.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expected_fps</strong> (<em>int</em>)</p></li>
+<li><p><strong>replay_seconds</strong> (<em>float</em><em> | </em><em>int</em>)</p></li>
+<li><p><strong>monitor</strong> (<em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.replace">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">replace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replay_seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ad_block/screen_recorder/settings.html#RecorderSettings.replace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.replace" title="Link to this definition"></a></dt>
+<dd><p>Create a new settings object with selected values replaced.</p>
+<p>The original settings object is not modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expected_fps</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>replay_seconds</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>monitor</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>RecorderSettings</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.to_dict">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ad_block/screen_recorder/settings.html#RecorderSettings.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Return a dictionary representation of the settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict[str, object]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.__repr__">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">__repr__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ad_block/screen_recorder/settings.html#RecorderSettings.__repr__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.__repr__" title="Link to this definition"></a></dt>
+<dd><p>Return a string representation of the settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ad_block.screen_recorder.settings.RecorderSettings.__eq__">
+<span class="sig-prename descclassname"><span class="pre">RecorderSettings.</span></span><span class="sig-name descname"><span class="pre">__eq__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ad_block/screen_recorder/settings.html#RecorderSettings.__eq__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ad_block.screen_recorder.settings.RecorderSettings.__eq__" title="Link to this definition"></a></dt>
+<dd><p>Check equality with another RecorderSettings object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<em>object</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="recorder.html" class="btn btn-neutral float-left" title="ReplayRecorder" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="exceptions.html" class="btn btn-neutral float-right" title="Exceptions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Bryce Lambert.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
