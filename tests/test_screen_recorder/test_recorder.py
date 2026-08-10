@@ -1,9 +1,9 @@
 import pytest
 
 from ad_block.screen_recorder import ReplayRecorder, RecorderSettings
-from ad_block.screen_recorder.ring_buffer import RingBuffer
-from ad_block.screen_recorder.capture import CaptureThread
 from ad_block.screen_recorder import exceptions as ex
+from ad_block.screen_recorder.capture_manager import Manager
+import time
 
 from test_screen_recorder.screen_recorder_data import (
     VALID_RECORDER_SETTINGS,
@@ -46,8 +46,7 @@ def test_constructor_default():
     recorder = ReplayRecorder()
 
     assert isinstance(recorder.settings, RecorderSettings)
-    assert isinstance(recorder._buffer, RingBuffer)
-    assert isinstance(recorder._capture, CaptureThread)
+    assert isinstance(recorder._manager, Manager)
 
 
 @pytest.mark.parametrize(
@@ -148,6 +147,10 @@ def test_stats():
     """Test the stats of a capture."""
     recorder = ReplayRecorder()
 
+    recorder.start()
+    time.sleep(0.2)
+    recorder.stop()
+
     stats = recorder.stats()
-    assert stats.total_frames == recorder._capture.tot_count
-    assert stats.runtime == recorder._capture.runtime
+    assert stats.total_frames == recorder._manager._buffer.size
+    assert stats.duration == recorder._manager._end_time - recorder._manager._start_time 

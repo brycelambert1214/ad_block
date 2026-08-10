@@ -1,4 +1,3 @@
-# TODO: Update the module level doc string
 """
 Pythonic based screen recording.
 
@@ -14,11 +13,8 @@ ReplayRecorder
 
 Dependencies
 ------------
-RingBuffer
-    Stores the most recent captured frames.
-
-CaptureThread
-    Performs screen capture in a background thread.
+CaptureManager
+    Class for managing all internal behavior of system.
 
 RecorderSettings
     Provides validated, immutable recorder configuration.
@@ -49,19 +45,20 @@ Examples
 >>> recorder.running  # output: False
 
 >>> # Retrieve recording statistics and frames
->>> recorder.runtime_fps()  # output: Current frames per second
->>> recorder.runtime()  # output: Total runtime of the recording
->>> recorder.total_frames()  # output: Total number of frames recorded
+>>> stats = recorder.runtime_fps()  # output: Current frames per second
+>>> print(stats) # output: Capture Stats:
+>>>              # output:     Total Number of Frames:: <<num_frames>>
+>>>              # output:     Duration::               <<duration>>
+>>>              # output:     Average fps::            <<fps>>
 >>> frames = recorder.frames()  # output: List of all frames in the buffer
 >>> latest_frame = recorder.latest()  # output: Most recent frame
 """
 from .settings import RecorderSettings
-from .capture_manager import Manager
+from .capture_manager import CaptureManager, CaptureStats
 from . import exceptions as ex
 import numpy as np
 
 class ReplayRecorder:
-    # TODO: Update the class level doc string
     """
     Class for recording the current screen information.
 
@@ -69,23 +66,19 @@ class ReplayRecorder:
     ----------
     settings : RecorderSettings | None
         Configuration for the recorder, including fps, replay_seconds, and monitor index.
-    buffer : RingBuffer
-        Thread-safe ring buffer for storing captured frames.
-    capture : CaptureThread
-        Thread responsible for capturing screen frames and storing them in the buffer.
+    manager: CaptureManager
+        Manager for the internal behavior of the system.
     running: bool
         State of if the system is currently recording the screen.
 
-    Methods
-    -------
+    Public Methods
+    --------------
     __init__(settings: RecorderSettings = None)
         Initilize the ReplayRecorder with specified RecorderSettings
     start() -> None
         Start the screen recording process.
     stop() -> None
         Stop the screen recording process.
-    _configure() -> None
-        Configure the settings throughout the system
     latest() -> np.ndarray | None
         Return the latest frame
     frames() -> list[np.ndarray]
@@ -96,13 +89,17 @@ class ReplayRecorder:
         The time of the whole screen recording.
     total_frames() -> int
         The total number of frames recorded.
+
+    Private Methods
+    ---------------
+    _validate_settings(
+                    value: RecorderSettings | None) -> RecorderSettings | None
+        Validate the input settings.
     """
 
     def __init__(self, settings: RecorderSettings = None):
-        if settings is None:
-            settings = RecorderSettings()
-        self.settings = settings
-        self._manager = Manager(settings)
+        self._manager = CaptureManager()
+        self.settings = RecorderSettings() if settings is None else settings
 
     @property
     def settings(self) -> RecorderSettings:
@@ -111,35 +108,15 @@ class ReplayRecorder:
 
     @settings.setter
     def settings(self, value: RecorderSettings | None):
-        self._configure(value or RecorderSettings())
+        settings = self._validate_settings(value)
+        if settings is not None:
+            self._manager.apply_settings(settings)
+            self._settings = settings
 
     @property
     def running(self) -> bool:
         """Property of currently screen recording."""
         return self._manager.running
-
-    def _configure(self, settings: RecorderSettings) -> None:
-        """Apply a new recorder configuration."""
-
-        if not isinstance(settings, RecorderSettings):
-            raise ex.InvalidType(
-                "settings must be a RecorderSettings object."
-            )
-
-        if not hasattr(self, '_buffer'):
-            self._settings = settings
-            return
-
-        if self.running:
-            raise ex.RecordingInProgress()
-
-        if settings == self._settings:
-            return
-
-        self._buffer.resize(settings.num_frames)
-        # self.capture.fps = settings.fps
-
-        self._settings = settings
 
     def start(self) -> None:
         """Start screen recording."""
@@ -161,7 +138,20 @@ class ReplayRecorder:
         """Return all frames in the buffer."""
         return self._manager.frames()
 
-    def stats(self) -> object:
+    def stats(self) -> CaptureStats:
         """Return screen recording stats."""
         return self._manager.final_stats()
 
+    def _validate_settings(
+        self, value: RecorderSettings | None) -> RecorderSettings | None:
+        """Validate the input settings."""
+        if value is None:
+            return RecorderSettings()
+
+        if not isinstance(value, RecorderSettings):
+            raise ex.InvalidType("settings must be a RecorderSettings object.")
+
+        if hasattr(self, "_settings") and  value == self._settings:
+            return None
+
+        return value

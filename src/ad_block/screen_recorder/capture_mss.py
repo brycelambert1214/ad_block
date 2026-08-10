@@ -59,8 +59,8 @@ import numpy as np
 from .ring_buffer import RingBuffer
 from . import exceptions as ex
 
-
-class CaptureThread:
+# TODO: add error handling for thread by storing error and raising in the stop
+class CaptureMSS:
     # TODO: Update the class level doc string
     """
     Capture all screen related information.
@@ -103,65 +103,62 @@ class CaptureThread:
         Validate monitor index.
     """
 
-    def __init__(
-        self,
-        buffer: RingBuffer,
-        monitor_idx: int
-    ):
+    def __init__(self,buffer: RingBuffer):
         self._buffer = buffer
-        self._monitor_idx = monitor_idx
+        self._monitor_idx = None
 
         self._running = threading.Event()
         self._thread: threading.Thread | None = None
 
         self._monitor: dict | None = None
+        self._error: Exception | None = None
 
-        self._tot_count = 0
-        self._runtime = 0.0
+    @property
+    def monitor_idx(self) -> int:
+        """Property for monitor_idx."""
+        return self._monitor_idx
+
+    @monitor_idx.setter
+    def monitor_idx(self, value: int) -> None:
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ex.InvalidType("The monitor must be of type 'int'")
+        if value <= 0:
+            raise ex.InvalidMonitorIndex("The monitor of interest must"
+                                         " be indexed above 0")
+        self._monitor_idx = value
 
     @property
     def running(self) -> bool:
         """Current state of the capture thread."""
         return self._running.is_set()
 
-    @property
-    def thread(self) -> threading.Thread | None:
-        """Current internal capture thread."""
-        return self._thread
-
     def _validate_monitor(self) -> None:
         """Validate the monitor index."""
-
         with mss.MSS() as sct:
 
+            # monitor index it over the number of real monitors
             if self._monitor_idx >= len(sct.monitors):
+                x = len(sct.monitors)
                 raise ex.InvalidMonitorIndex(
                     f"Monitor {self._monitor_idx} does not exist. "
                     f"Available monitors: {len(sct.monitors) - 1}"
                 )
-
             self._monitor = sct.monitors[self._monitor_idx]
 
-    def start_capture(self) -> None:
+    def start(self) -> None:
         """Start the screen capture thread."""
-
         if self.running:
             return
 
+        self._error = None
         self._validate_monitor()
-
         self._running.set()
 
-        self._thread = threading.Thread(
-            target=self.run,
-            daemon=True
-        )
-
+        self._thread = threading.Thread(target=self.run, daemon=True)
         self._thread.start()
 
-    def stop_capture(self) -> None:
+    def stop(self) -> None:
         """Stop the screen capture thread."""
-
         if not self.running:
             return
 
@@ -173,6 +170,9 @@ class CaptureThread:
         self._thread = None
         self._monitor = None
 
+        if self._error is not None:
+            raise self._error
+
     def run(self) -> None:
         """
         Capture frames until stopped.
@@ -180,24 +180,15 @@ class CaptureThread:
         Frames are captured as quickly as possible and passed directly
         to the RingBuffer.
         """
-
         try:
-
             with mss.MSS() as sct:
-
                 while self._running.is_set():
-
                     screenshot = sct.grab(self._monitor)
-
-                    frame = np.asarray(
-                        screenshot
-                    )[:, :, :3]
-
+                    frame = np.asarray(screenshot)[:, :, :3]
                     self._buffer.add(frame)
 
-        except Exception:
-            self._running.clear()
-            raise
+        except Exception as err:
+            self._error = err
 
         finally:
             self._running.clear()

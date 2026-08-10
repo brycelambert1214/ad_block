@@ -98,6 +98,18 @@ class InvalidMonitorIndex(ConfigurationError, IndexError):
         return self.message
 
 
+class InvalidAttributeSetting(ConfigurationError, AttributeError):
+    """Class for all invalid attribute stting"""
+
+    def __init__(self, level: int=logging.ERROR,
+                     message: str="Invalid setting of attribute."):
+            self.level = level
+            self.message = message
+            super().__init__(message)
+    
+    def __str__(self):
+        return self.message
+
 ################################################################################
 #                              Runtime Error                                   #
 ################################################################################

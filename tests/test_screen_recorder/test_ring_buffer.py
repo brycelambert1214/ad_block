@@ -54,9 +54,10 @@ from test_screen_recorder.screen_recorder_data import (
 def test_constructor():
     """Test RingBuffer construction."""
 
-    buffer = RingBuffer(capacity=5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
-    assert buffer.capacity == 5
+    assert buffer._capacity == 5
     assert len(buffer) == 0
 
 
@@ -67,9 +68,10 @@ def test_constructor():
 def test_valid_capacity(capacity):
     """Test valid buffer capacities."""
 
-    buffer = RingBuffer(capacity)
+    buffer = RingBuffer()
+    buffer.resize(capacity)
 
-    assert buffer.capacity == capacity
+    assert buffer._capacity == capacity
 
 
 # ------------------------------------------------------------
@@ -79,7 +81,8 @@ def test_valid_capacity(capacity):
 def test_add():
     """Test adding a frame."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
     frame = np.zeros((5, 5))
 
@@ -96,7 +99,8 @@ def test_add():
 def test_latest():
     """Test latest returns newest frame."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(2)
 
     frame1 = np.zeros((2, 2))
     frame2 = np.ones((2, 2))
@@ -110,7 +114,8 @@ def test_latest():
 def test_latest_empty():
     """Test latest on empty buffer."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
     assert buffer.latest() is None
 
@@ -122,7 +127,8 @@ def test_latest_empty():
 def test_snapshot():
     """Test snapshot returns current frames."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
     frame1 = np.zeros((2, 2))
     frame2 = np.ones((2, 2))
@@ -144,7 +150,8 @@ def test_snapshot():
 def test_len():
     """Test length of buffer."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
     buffer.add(np.zeros((1, 1)))
     buffer.add(np.zeros((1, 1)))
@@ -159,7 +166,8 @@ def test_len():
 def test_clear():
     """Test clearing all frames."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
     buffer.add(np.zeros((1, 1)))
     buffer.add(np.zeros((1, 1)))
@@ -177,17 +185,19 @@ def test_clear():
 def test_resize_grow():
     """Test increasing buffer capacity."""
 
-    buffer = RingBuffer(3)
+    buffer = RingBuffer()
+    buffer.resize(3)
 
     buffer.resize(10)
 
-    assert buffer.capacity == 10
+    assert buffer._capacity == 10
 
 
 def test_resize_shrink():
     """Test shrinking buffer preserves newest frames."""
 
-    buffer = RingBuffer(5)
+    buffer = RingBuffer()
+    buffer.resize(5)
 
     frames = [np.array([i]) for i in range(5)]
 
@@ -220,9 +230,11 @@ def test_invalid_capacity_values(capacity):
         if hasattr(capacity, "values")
         else capacity
     )
+    print(capacity)
 
     with pytest.raises(ex.NegativeValue):
-        RingBuffer(capacity)
+        buffer = RingBuffer()
+        buffer.resize(capacity)
 
 
 @pytest.mark.parametrize(
@@ -233,4 +245,5 @@ def test_invalid_capacity_types(capacity):
     """Test invalid capacity types."""
 
     with pytest.raises(ex.InvalidType):
-        RingBuffer(capacity)
+        buffer = RingBuffer()
+        buffer.resize(capacity)

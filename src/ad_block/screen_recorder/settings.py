@@ -105,7 +105,6 @@ class RecorderSettings:
     @property
     def num_frames(self) -> int:
         """Number of frames required for the replay buffer."""
-        print(max(1, int(self.expected_fps * self.replay_seconds)))
         return max(1, int(self.expected_fps * self.replay_seconds))
 
     def replace(self, expected_fps: int | None = None,
@@ -118,9 +117,10 @@ class RecorderSettings:
         """
 
         return RecorderSettings(
-            expected_fps=(self.expected_fps if expected_fps is None else expected_fps),
+            expected_fps=(self.expected_fps if expected_fps is None 
+                                                            else expected_fps),
             replay_seconds=(self.replay_seconds if replay_seconds is None
-                                    else replay_seconds),
+                                                        else replay_seconds),
             monitor=(self.monitor if monitor is None else monitor)
         )
 

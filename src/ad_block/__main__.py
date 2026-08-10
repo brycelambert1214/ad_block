@@ -12,17 +12,19 @@ if __name__ == "__main__":
         print(err)
         raise Exception("ScreenRecordingError: " + str(err))
 
+    settings = RecorderSettings(expected_fps=31, replay_seconds=replay_seconds,
+                                    monitor=2)
     print(recorder.running)
     recorder.start()
     print((recorder.running))
-    time.sleep(replay_seconds)
+    time.sleep(replay_seconds/2)
+
+    time.sleep(replay_seconds/2)
 
     recorder.stop()
 
     stats = recorder.stats()
-    print(stats.fps)
-    print(stats.duration)
-    print(stats.total_frames)
+    print(stats)
 
     frames = recorder.frames()
     print(len(frames))

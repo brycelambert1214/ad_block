@@ -79,17 +79,21 @@ class RingBuffer:
         Return the most recently added frame.
     """
 
-    def __init__(self, capacity: int):
-        self._validate_capacity(capacity)
-
-        self._capacity = capacity
-        self._lock = threading.Lock()
-        self._frames = deque(maxlen=capacity)
+    def __init__(self):
+        self._capacity: int = None
+        self._lock: threading.Lock = threading.Lock()
+        self._frames: deque[np.ndarray] = deque()
+        self._tot_added: int = 0
 
     @property
-    def capacity(self) -> int:
-        """Property for the maximum number of frames in the buffer."""
-        return self._capacity
+    def tot_added(self):
+        """Property for tracking the total number of frames added."""
+        return self._tot_added
+
+    @tot_added.setter
+    def tot_added(self, *args, **kwargs):
+        raise ex.InvalidAttributeSetting("Cannot set the total number of"
+                                         "recorded frames.")
 
     @property
     def size(self) -> int:
@@ -102,6 +106,7 @@ class RingBuffer:
         # with the buffer specific thread
         with self._lock:
             self._frames.append(frame)
+            self._tot_added += 1
 
     def snapshot(self) -> list[np.ndarray]:
         """Return current frames."""
@@ -122,8 +127,14 @@ class RingBuffer:
         self._validate_capacity(capacity)
 
         with self._lock:
+            self._validate_capacity(capacity)
             self._capacity = capacity
             self._frames = deque(self._frames, maxlen=self._capacity)
+
+    def reset_stats(self):
+        """Reset the total number of added frames."""
+        with self._lock:
+            self._tot_added = 0
     
     def clear(self) -> None:
         """Remove all stored frames."""
