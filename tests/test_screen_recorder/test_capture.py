@@ -1,16 +1,16 @@
 import pytest
 from unittest.mock import MagicMock, patch
 
-from ad_block.screen_recorder.capture_mss import CaptureMSS
+from ad_block.screen_recorder._capture_mss import _CaptureMSS
 from ad_block.screen_recorder.settings import RecorderSettings
-from ad_block.screen_recorder.ring_buffer import RingBuffer
+from ad_block.screen_recorder._ring_buffer import _RingBuffer
 from ad_block.screen_recorder import exceptions as ex
 
 
 # TODO: Finish the following checklist of tests.
 #
 # Constructor
-# [x] creates CaptureMSS with valid buffer and settings
+# [x] creates _CaptureMSS with valid buffer and settings
 # [x] initializes running state as False
 # [x] initializes frame count as zero
 # [x] initializes runtime as zero
@@ -42,7 +42,7 @@ from ad_block.screen_recorder import exceptions as ex
 # Capture Loop
 # [ ] captures frames from mss
 # [ ] converts screenshots into numpy arrays
-# [ ] adds frames to RingBuffer
+# [ ] adds frames to _RingBuffer
 # [ ] counts captured frames
 # [ ] calculates runtime correctly
 # [ ] clears state after capture exception
@@ -55,11 +55,11 @@ from ad_block.screen_recorder import exceptions as ex
 # Future Refactor
 # [ ] remove direct dependency on threading.Thread
 # [ ] separate capture logic from thread management
-# [ ] allow CaptureMSS object reuse after stopping
+# [ ] allow _CaptureMSS object reuse after stopping
 # [ ] support non-monitor capture sources (HDMI, cameras, etc.)# TODO: Finish the following checklist of tests.
 #
 # Constructor
-# [x] creates CaptureMSS with valid buffer and settings
+# [x] creates _CaptureMSS with valid buffer and settings
 # [x] initializes running state as False
 # [x] initializes frame count as zero
 # [x] initializes runtime as zero
@@ -91,7 +91,7 @@ from ad_block.screen_recorder import exceptions as ex
 # Capture Loop
 # [ ] captures frames from mss
 # [ ] converts screenshots into numpy arrays
-# [ ] adds frames to RingBuffer
+# [ ] adds frames to _RingBuffer
 # [ ] counts captured frames
 # [ ] calculates runtime correctly
 # [ ] clears state after capture exception
@@ -104,7 +104,7 @@ from ad_block.screen_recorder import exceptions as ex
 # Future Refactor
 # [ ] remove direct dependency on threading.Thread
 # [ ] separate capture logic from thread management
-# [ ] allow CaptureMSS object reuse after stopping
+# [ ] allow _CaptureMSS object reuse after stopping
 # [ ] support non-monitor capture sources (HDMI, cameras, etc.)
 
 # ------------------------------------------------------------
@@ -119,14 +119,14 @@ def monitor():
 @pytest.fixture
 def buffer():
     """Test ring buffer."""
-    buffer = RingBuffer()
+    buffer = _RingBuffer()
     buffer.resize(30)
     return buffer
 
 @pytest.fixture
 def capture(buffer, monitor):
-    """CaptureMSS instance."""
-    capture = CaptureMSS(buffer)
+    """_CaptureMSS instance."""
+    capture = _CaptureMSS(buffer)
     capture.monitor_idx = monitor
     return capture
 
@@ -137,7 +137,7 @@ def capture(buffer, monitor):
 # ------------------------------------------------------------
 
 def test_constructor(capture, buffer, monitor):
-    """Test CaptureMSS initialization."""
+    """Test _CaptureMSS initialization."""
     assert capture._buffer is buffer
     assert capture._monitor_idx is monitor
     assert capture.running is False
@@ -160,7 +160,7 @@ def test_running_during_run(capture):
 # Monitor validation tests
 # ------------------------------------------------------------
 
-@patch("ad_block.screen_recorder.capture_mss.mss.MSS")
+@patch("ad_block.screen_recorder._capture_mss.mss.MSS")
 def test_validate_monitor(mock_mss, capture):
     """Test valid monitor selection."""
 
@@ -173,7 +173,7 @@ def test_validate_monitor(mock_mss, capture):
 
     assert capture._monitor == mock_context.monitors[0]
 
-@patch("ad_block.screen_recorder.capture_mss.mss")
+@patch("ad_block.screen_recorder._capture_mss.mss")
 def test_invalid_monitor(mock_mss, capture):
     """Test invalid monitor index."""
 
@@ -188,7 +188,7 @@ def test_invalid_monitor(mock_mss, capture):
 # Start / stop tests
 # ------------------------------------------------------------
 
-@patch.object(CaptureMSS, "_validate_monitor")
+@patch.object(_CaptureMSS, "_validate_monitor")
 def test_start_capture(mock_validate, capture):
     """Test starting capture."""
 

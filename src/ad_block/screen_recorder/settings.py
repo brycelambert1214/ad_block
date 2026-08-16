@@ -31,8 +31,10 @@ Examples
 >>> print(settings)  # output: RecorderSettings(fps=30, replay_seconds=5, monitor=1)
 """
 
-from .config import DEFAULT_EXPECTED_FPS, DEFAULT_REPLAY_SECONDS
+from ad_block.screen_recorder.config import (DEFAULT_EXPECTED_FPS, DEFAULT_REPLAY_SECONDS,
+                     MAX_BUFFER_FRAMES, MAX_EXPECTED_FPS, MAX_REPLAY_SECONDS)
 from . import exceptions as ex
+import math
 
 
 class RecorderSettings:
@@ -82,6 +84,8 @@ class RecorderSettings:
         self._validate_expected_fps(expected_fps)
         self._validate_replay_seconds(replay_seconds)
         self._validate_monitor(monitor)
+        self._validate_buffer_size(expected_fps=expected_fps,
+                                    replay_seconds=replay_seconds)
 
         self._expected_fps: int = expected_fps
         self._replay_seconds: float | int = replay_seconds
@@ -92,20 +96,39 @@ class RecorderSettings:
         """Monitor index used for capture."""
         return self._monitor
 
+    @monitor.setter
+    def monitor(self, _: int) -> None:
+        raise ex.InvalidAttributeSetting("Cannot manually set the monitor idx.")
+
     @property
     def expected_fps(self) -> int:
         """Frames per second for screen capture."""
         return self._expected_fps
 
+    @expected_fps.setter
+    def expected_fps(self, _: int | float) -> None:
+        raise ex.InvalidAttributeSetting("Cannot manually set the expected fps.")
+
     @property
-    def replay_seconds(self) -> float | int:
+    def replay_seconds(self) -> int | float:
         """Number of seconds stored in the replay buffer."""
         return self._replay_seconds
+
+    @replay_seconds.setter
+    def replay_seconds(self, _: int | float) -> None:
+        raise ex.InvalidAttributeSetting("Cannot manually set"
+                                         " the replay seconds")
 
     @property
     def num_frames(self) -> int:
         """Number of frames required for the replay buffer."""
+        
         return max(1, int(self.expected_fps * self.replay_seconds))
+
+    @num_frames.setter
+    def num_frames(self, _: int) -> None:
+        raise ex.InvalidAttributeSetting("Cannot manually se the"
+                                         " number of frames")
 
     def replace(self, expected_fps: int | None = None,
                 replay_seconds: float | None = None,
@@ -125,32 +148,51 @@ class RecorderSettings:
         )
 
     @staticmethod
+    def _validate_buffer_size(expected_fps, replay_seconds):
+        """Validate the buffer size."""
+        num_frames = int(expected_fps * replay_seconds)
+        if num_frames > MAX_BUFFER_FRAMES:
+            raise ex.OutofBufferMemoryRange("Buffer cannot allocate more than"
+                                            f"{MAX_BUFFER_FRAMES} frames")
+
+    @staticmethod
     def _validate_expected_fps(value: int) -> None:
         """Validate frames per second."""
 
-        if not isinstance(value, int):
+        if isinstance(value, bool) or not isinstance(value, int):
             raise ex.InvalidType("expected_fps must be an integer.")
 
         if value <= 0:
-            raise ex.NegativeValue("expected_fps must be greater than zero.")
+            raise ex.NonPositiveValue("expected_fps must be greater than zero.")
+
+        if value > MAX_EXPECTED_FPS:
+            raise ex.OutofFramesPerSecondRange("Expected fps value cannont"
+                                               f"be above {MAX_EXPECTED_FPS}")
 
     @staticmethod
-    def _validate_replay_seconds(value: float) -> None:
+    def _validate_replay_seconds(value: int | float) -> None:
         """Validate replay duration."""
 
-        if not isinstance(value, (int, float)):
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ex.InvalidType("replay_seconds must be numeric.")
+
+        if not math.isfinite(value):
+            raise ex.InvalidInfiniteInput("Cannot support infinite replay time")
 
         if value <= 0:
             raise ex.NegativeValue("replay_seconds must be greater than zero.")
 
+        if value > MAX_REPLAY_SECONDS:
+            raise ex.OutofReplaySecondRange("Replay seconds must not be greater"
+                                            f"than {MAX_REPLAY_SECONDS}")
+
     @staticmethod
     def _validate_monitor(value: int) -> None:
         """Validate monitor index."""
-        if not isinstance(value, int):
+        if isinstance(value, bool) or not isinstance(value, int):
             raise ex.InvalidType("Monitor must be an integer.")
 
-        if value < 1:
+        if value <= 0:
             raise ex.InvalidMonitorIndex("Monitor must be greater than zero.")
 
     def __repr__(self) -> str:

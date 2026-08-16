@@ -9,9 +9,11 @@ and may change without notice.
 from .recorder import ReplayRecorder
 from .settings import RecorderSettings
 from .exceptions import ScreenRecordingError
+from .stats import CaptureStats
 
 __all__ = [
     "ReplayRecorder",
     "RecorderSettings",
     "ScreenRecordingError",
+    "CaptureStats"
 ]

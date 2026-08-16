@@ -112,11 +112,11 @@ def test_replace_returns_new_object():
     )
 
     updated = original.replace(
-        expected_fps=120,
+        expected_fps=90,
     )
 
     assert original.expected_fps == 30
-    assert updated.expected_fps == 120
+    assert updated.expected_fps == 90
 
 
 def test_replace_keeps_original_values():
@@ -166,7 +166,7 @@ def test_not_equal_settings():
     )
 
     settings_b = RecorderSettings(
-        expected_fps=120,
+        expected_fps=90,
         replay_seconds=5,
         monitor=1,
     )
@@ -222,7 +222,7 @@ def test_invalid_fps_values(fps):
 
     fps = fps.values[0] if hasattr(fps, "values") else fps
 
-    with pytest.raises(ex.NegativeValue):
+    with pytest.raises(ex.NonPositiveValue):
         RecorderSettings(expected_fps=fps)
 
 

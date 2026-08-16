@@ -2,10 +2,10 @@ import pytest
 
 from ad_block.screen_recorder import ReplayRecorder, RecorderSettings
 from ad_block.screen_recorder import exceptions as ex
-from ad_block.screen_recorder.capture_manager import Manager
+from ad_block.screen_recorder._capture_manager import _CaptureManager
 import time
 
-from test_screen_recorder.screen_recorder_data import (
+from tests.test_screen_recorder.screen_recorder_data import (
     VALID_RECORDER_SETTINGS,
     INVALID_RECORDER_SETTINGS,
 )
@@ -46,7 +46,7 @@ def test_constructor_default():
     recorder = ReplayRecorder()
 
     assert isinstance(recorder.settings, RecorderSettings)
-    assert isinstance(recorder._manager, Manager)
+    assert isinstance(recorder._manager, _CaptureManager)
 
 
 @pytest.mark.parametrize(

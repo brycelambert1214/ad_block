@@ -49,7 +49,7 @@ from . import exceptions as ex
 import numpy as np
 
 
-class RingBuffer:
+class _RingBuffer:
     # TODO: Update the class level doc string
     """
     Keeps track of the current and recent screens.

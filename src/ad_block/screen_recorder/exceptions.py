@@ -47,6 +47,7 @@ Examples
 >>>     print(err)  # output: 'Test the negative value error.'
 """
 import logging
+import warnings
 
 
 class ScreenRecordingError(Exception):
@@ -110,6 +111,26 @@ class InvalidAttributeSetting(ConfigurationError, AttributeError):
     def __str__(self):
         return self.message
 
+
+class  OutofFramesPerSecondRange(ConfigurationError, AttributeError):
+    """Class for too high of an excpeted frames per second."""
+
+    def __init__(self, level: int=logging.ERROR,
+                    message: str="Invalid expected frames per second."):
+        self.level = level
+        self.message = message
+        super().__init__(message)
+
+
+class  NonPositiveValue(ConfigurationError, AttributeError):
+    """Class for expected positive value."""
+
+    def __init__(self, level: int=logging.ERROR,
+                    message: str="Expected a positive value."):
+        self.level = level
+        self.message = message
+        super().__init__(message)
+
 ################################################################################
 #                              Runtime Error                                   #
 ################################################################################
@@ -133,3 +154,22 @@ class RecordingInProgress(StateError):
 
 class CaptureError(ScreenRecordingError):
     """Base class for all capture based exceptions."""
+
+################################################################################
+#                                Warnings                                      #
+################################################################################
+
+
+class ScreenRecordingWarning(Warning):
+    """Base warning for screen recording package."""
+
+
+class ConfigurationWarning(ScreenRecordingWarning):
+    """Base warning for all configuration Warnings."""
+
+
+class StateWarning(ScreenRecordingWarning):
+    """Base warning for all state warnings."""
+
+class CaptureWarning(ScreenRecordingWarning):
+    """Base class for all capture based warnings."""

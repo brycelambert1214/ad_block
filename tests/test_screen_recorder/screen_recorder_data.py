@@ -31,7 +31,7 @@ VALID_SETTINGS = [
         id="60fps_recording",
     ),
     pytest.param(
-        120,
+        90,
         0.5,
         2,
         id="high_fps_short_recording",

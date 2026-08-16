@@ -1,4 +1,4 @@
-from ad_block.screen_recorder import ReplayRecorder, ScreenRecordingError, RecorderSettings
+from ad_block.screen_recorder import ReplayRecorder, ScreenRecordingError, RecorderSettings, CaptureStats
 import time
 
 if __name__ == "__main__":
@@ -8,6 +8,7 @@ if __name__ == "__main__":
                                 monitor=1)
     try:
         recorder = ReplayRecorder(settings)
+        print(recorder.stats())
     except ScreenRecordingError as err:
         print(err)
         raise Exception("ScreenRecordingError: " + str(err))
@@ -15,6 +16,8 @@ if __name__ == "__main__":
     settings = RecorderSettings(expected_fps=31, replay_seconds=replay_seconds,
                                     monitor=2)
     print(recorder.running)
+    recorder.stop()
+    recorder.start()
     recorder.start()
     print((recorder.running))
     time.sleep(replay_seconds/2)
@@ -25,6 +28,7 @@ if __name__ == "__main__":
 
     stats = recorder.stats()
     print(stats)
+    print(stats.status)
 
     frames = recorder.frames()
     print(len(frames))

@@ -56,11 +56,11 @@ Examples
 import threading
 import mss
 import numpy as np
-from .ring_buffer import RingBuffer
+from ._ring_buffer import _RingBuffer
 from . import exceptions as ex
 
 # TODO: add error handling for thread by storing error and raising in the stop
-class CaptureMSS:
+class _CaptureMSS:
     # TODO: Update the class level doc string
     """
     Capture all screen related information.
@@ -103,7 +103,7 @@ class CaptureMSS:
         Validate monitor index.
     """
 
-    def __init__(self,buffer: RingBuffer):
+    def __init__(self,buffer: _RingBuffer):
         self._buffer = buffer
         self._monitor_idx = None
 
@@ -145,22 +145,22 @@ class CaptureMSS:
                 )
             self._monitor = sct.monitors[self._monitor_idx]
 
-    def start(self) -> None:
+    def start(self) -> None | ex.RecordingInProgress:
         """Start the screen capture thread."""
         if self.running:
-            return
+            return ex.RecordingInProgress()
 
         self._error = None
         self._validate_monitor()
         self._running.set()
 
-        self._thread = threading.Thread(target=self.run, daemon=True)
+        self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
-    def stop(self) -> None:
+    def stop(self) -> None | ex.RecordingInProgress:
         """Stop the screen capture thread."""
         if not self.running:
-            return
+            return ex.RecordingInProgress()
 
         self._running.clear()
 
@@ -173,7 +173,7 @@ class CaptureMSS:
         if self._error is not None:
             raise self._error
 
-    def run(self) -> None:
+    def _run(self) -> None:
         """
         Capture frames until stopped.
 

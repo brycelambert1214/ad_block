@@ -1,58 +1,19 @@
 # TODO: Add the module doc string
 
 from ad_block.screen_recorder.settings import RecorderSettings
-from .ring_buffer import RingBuffer
-from .capture_mss import CaptureMSS
-from dataclasses import dataclass
+from ad_block.screen_recorder._ring_buffer import _RingBuffer
+from ad_block.screen_recorder._capture_mss import _CaptureMSS
+from ad_block.screen_recorder.stats import CaptureStats
 import ad_block.screen_recorder.exceptions as ex
 import time
 
-
-@dataclass
-class CaptureStats:
-    """
-    Class for representing all capture stats.
-
-    Methods
-    -------
-    __str__():
-        Return a string with the information of capture stats.
-
-    Examples
-    --------
-    >>> stats = CaptureStats(total_frames=tot_frames, duration=time_of_capture)
-    >>> print(stats)
-    >>> # output:
-    >>> # CaptureStats:
-    >>> #     Total Number of Frames:: tot_frames
-    >>> #     Duration::               time_of_capture
-    >>> #     Average fps::            tot_frames / time_of_capture
-    """
-    total_frames: int
-    duration: float
-
-    @property
-    def fps(self):
-        """Return the measured fps."""
-        if self.duration == 0:
-            return 0
-        return self.total_frames / self.duration
-
-    def __str__(self):
-        return (f"Capture Stats:\n"
-                f"\tTotal Number of Frames:: {self.total_frames:>5}\n"
-                f"\tDuration::               {self.duration:>7.3f}\n"
-                f"\tAverage fps::            {self.fps:>8.3f}")
-    
-
-
-class CaptureManager:
+class _CaptureManager:
     # TODO: Add a class level doc string
 
     def __init__(self):
         self._settings = None
-        self._buffer = RingBuffer()
-        self._capture = CaptureMSS(self._buffer)
+        self._buffer = _RingBuffer()
+        self._capture = _CaptureMSS(self._buffer)
         self._start_time = None
         self._end_time = None
 
@@ -64,22 +25,40 @@ class CaptureManager:
     def start(self):
         """Start the redording threading for the capture thread."""
         self._start_time = time.perf_counter()
-        self._capture.start()
+        err = self._capture.start()
+        if err is not None:
+            return err
 
     def stop(self):
         """Stop the recording threading for the capture thread"""
-        self._capture.stop()
+        err = self._capture.stop()
         self._end_time = time.perf_counter()
+        if err is not None:
+            return err
 
-    def current_stats(self):
+    def stats(self):
+        """Decides which stats type to return."""
+        if self._start_time is None:
+            return self._pre_start_stats()
+        if self._end_time is None:
+            return self._current_stats()
+        return self._final_stats()
+
+    def _pre_start_stats(self):
+        """Return the stats before the system starts."""
+        return CaptureStats(status="Pre Start")
+
+    def _current_stats(self):
         """Return the current stats."""
         return CaptureStats(total_frames=self._buffer.tot_added,
-                            duration=time.perf_counter() - self._start_time)
+                            duration=time.perf_counter() - self._start_time,
+                            status="Current")
 
-    def final_stats(self):
+    def _final_stats(self):
         """Return the final stats of the screen recording."""
         return CaptureStats(total_frames=self._buffer.tot_added,
-                            duration=self._end_time - self._start_time)
+                            duration=self._end_time - self._start_time,
+                            status="Final")
 
     def frames(self):
         """Return filled or partially filled buffer."""

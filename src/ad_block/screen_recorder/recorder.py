@@ -16,6 +16,9 @@ Dependencies
 CaptureManager
     Class for managing all internal behavior of system.
 
+CaptureStats
+    Dataclass for organizing all capture stats.
+
 RecorderSettings
     Provides validated, immutable recorder configuration.
 
@@ -54,9 +57,10 @@ Examples
 >>> latest_frame = recorder.latest()  # output: Most recent frame
 """
 from .settings import RecorderSettings
-from .capture_manager import CaptureManager, CaptureStats
+from ._capture_manager import _CaptureManager, CaptureStats
 from . import exceptions as ex
 import numpy as np
+import warnings
 
 class ReplayRecorder:
     """
@@ -66,8 +70,6 @@ class ReplayRecorder:
     ----------
     settings : RecorderSettings | None
         Configuration for the recorder, including fps, replay_seconds, and monitor index.
-    manager: CaptureManager
-        Manager for the internal behavior of the system.
     running: bool
         State of if the system is currently recording the screen.
 
@@ -89,16 +91,10 @@ class ReplayRecorder:
         The time of the whole screen recording.
     total_frames() -> int
         The total number of frames recorded.
-
-    Private Methods
-    ---------------
-    _validate_settings(
-                    value: RecorderSettings | None) -> RecorderSettings | None
-        Validate the input settings.
     """
 
     def __init__(self, settings: RecorderSettings = None):
-        self._manager = CaptureManager()
+        self._manager = _CaptureManager()
         self.settings = RecorderSettings() if settings is None else settings
 
     @property
@@ -118,17 +114,22 @@ class ReplayRecorder:
         """Property of currently screen recording."""
         return self._manager.running
 
+    @running.setter
+    def running(self, value: bool) -> Exception:
+        raise ex.InvalidAttributeSetting("Cannot manually"
+                                         " set the running state.")
+
     def start(self) -> None:
         """Start screen recording."""
-        if self.running:
-            raise ex.RecordingInProgress()
-        self._manager.start()
+        err = self._manager.start()
+        if err is not None:
+            warnings.warn(str(err), ex.StateWarning, stacklevel=2)
 
     def stop(self) -> None:
         """Stop screen recording."""
-        if not self.running:
-            return
-        self._manager.stop()
+        err = self._manager.stop()
+        if err is not None:
+            warnings.warn(str(err), ex.StateWarning, stacklevel=2)
 
     def latest(self) -> np.ndarray | None:
         """Return the most recent frame."""
@@ -139,8 +140,17 @@ class ReplayRecorder:
         return self._manager.frames()
 
     def stats(self) -> CaptureStats:
-        """Return screen recording stats."""
-        return self._manager.final_stats()
+        """
+        Return screen recording stats.
+
+        Description
+        -----------
+        This function returns the stats at this moment in time. If called before
+        the capture has begun it returns zeros with a status of "Pre Start". If
+        the recorder is currently recording the stats are for that time, and if
+        the recording is done it returns the final stats for the run. 
+        """
+        return self._manager.stats()
 
     def _validate_settings(
         self, value: RecorderSettings | None) -> RecorderSettings | None:
