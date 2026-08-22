@@ -41,6 +41,9 @@ class _CaptureManager:
         self._new_frame.wait()
         self._new_frame.clear()
 
+    def clear_buffer(self):
+        self._buffer.clear()
+
     def start(self):
         """Start the redording threading for the capture thread."""
         self._start_time = time.perf_counter()

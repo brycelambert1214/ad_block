@@ -4,5 +4,8 @@
             "path": "."
         }
     ],
-    "settings": {}
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true
+    }
 }

@@ -3,6 +3,7 @@ Validated configuration for DataAcquisition.
 """
 
 from ad_block.screen_recorder import RecorderSettings
+
 from . import exceptions as ex
 
 
@@ -18,13 +19,10 @@ class DataAcquisitionSettings:
         Maximum time to wait for user confirmation of an event.
     """
 
-    __slots__ = ("_recorder", "_event_timeout")
+    __slots__ = ("_event_timeout", "_recorder")
 
-    def __init__(
-        self,
-        recorder: RecorderSettings | None = None,
-        event_timeout: int | float = 5,
-    ):
+    def __init__(self, recorder: RecorderSettings | None = None,
+                 event_timeout: float = 5   ):
         if recorder is None:
             recorder = RecorderSettings()
 
@@ -51,7 +49,7 @@ class DataAcquisitionSettings:
         return self._event_timeout
 
     @event_timeout.setter
-    def event_timeout(self, _: int | float) -> None:
+    def event_timeout(self, _: float) -> None:
         raise ex.InvalidAttributeSetting(
             "Cannot manually set event timeout."
         )
@@ -59,7 +57,7 @@ class DataAcquisitionSettings:
     def replace(
         self,
         recorder: RecorderSettings | None = None,
-        event_timeout: int | float | None = None,
+        event_timeout: float | None = None,
     ) -> "DataAcquisitionSettings":
         """
         Create a new settings object with selected values replaced.
@@ -84,7 +82,7 @@ class DataAcquisitionSettings:
             )
 
     @staticmethod
-    def _validate_event_timeout(value: int | float) -> None:
+    def _validate_event_timeout(value: float) -> None:
         """Validate event timeout."""
         if isinstance(value, bool) or not isinstance(value, (int, float)):
             raise ex.InvalidType(

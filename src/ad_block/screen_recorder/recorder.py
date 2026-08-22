@@ -152,6 +152,10 @@ class ReplayRecorder:
         """Return all frames in the buffer."""
         return self._manager.frames()
 
+    def clear_buffer(self) -> None:
+        """Clears the current buffer."""
+        self._manager.clear_buffer()
+
     def stats(self) -> CaptureStats:
         """
         Return screen recording stats.

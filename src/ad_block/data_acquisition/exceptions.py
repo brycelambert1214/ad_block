@@ -1,5 +1,6 @@
 import logging
 
+
 class DataAcquisitionError(Exception):
     """Base class for all screen recording exceptions."""
 

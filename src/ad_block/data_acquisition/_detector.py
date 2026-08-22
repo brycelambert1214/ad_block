@@ -2,6 +2,9 @@
 
 from dataclasses import dataclass
 
+from ._svd_detector import SVDChangeDetector
+
+import time
 @dataclass
 class _Event:
     AD_START = None
@@ -28,8 +31,13 @@ class _DetectorManager:
     """Class for managing all data acquisition detection."""
 
     def __init__(self):
-        self.detector = None
+        self.detector = SVDChangeDetector()
+
+    def clear_history(self):
+        self.detector.reset_history()
 
     def detect(self, frames):
-        print("Detecting")
-        return True
+        changed = self.detector.detect(frames[-1])
+        if changed:
+            print("Screen change detected.")
+        return changed

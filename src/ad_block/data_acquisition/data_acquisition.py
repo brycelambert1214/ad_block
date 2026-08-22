@@ -1,15 +1,16 @@
 """
 This Module will provide the API for acquiring training data.
 """
-from ad_block.screen_recorder import ReplayRecorder
-from ad_block.data_acquisition._detector import _DetectorManager
-from ad_block.data_acquisition._storage import _Storage
-from ad_block.data_acquisition._interface import _Interface
-from ad_block.data_acquisition import exceptions as ex
-from ad_block.data_acquisition.settings import DataAcquisitionSettings
 import threading
 import time
-import cv2
+
+from ad_block.data_acquisition import exceptions as ex
+from ad_block.data_acquisition._detector import _DetectorManager
+from ad_block.data_acquisition._interface import _Interface
+from ad_block.data_acquisition._storage import _Storage
+from ad_block.data_acquisition.settings import DataAcquisitionSettings
+from ad_block.screen_recorder import ReplayRecorder
+
 
 class DataAcquisition:
     """Class for user based data acquisition."""
@@ -18,12 +19,13 @@ class DataAcquisition:
         self.settings = (DataAcquisitionSettings() if settings is None
                          else settings)
         self._detector = _DetectorManager()
-        self._storage = _Storage()
+        self._storage = _Storage(r"C:\Users\bryce\Documents\Projects\ad_block")
         self._interface = _Interface()
         self._recorder = ReplayRecorder()
         self._is_event = None
         self._running = threading.Event()
         self._thread: threading.Thread | None = None
+        self._skip_frame = False
 
     @property
     def settings(self) -> DataAcquisitionSettings:
@@ -62,6 +64,7 @@ class DataAcquisition:
             self._recorder.start()
 
             self._running.set()
+            self._storage.start()
             self._thread = threading.Thread(target=self._run, daemon=True)
             self._thread.start()
 
@@ -71,6 +74,7 @@ class DataAcquisition:
 
             if self._recorder.running:
                 self._recorder.stop()
+                self._storage.stop()
             raise
 
     def stop(self):
@@ -80,6 +84,7 @@ class DataAcquisition:
         self._running.clear()
 
         self._recorder.stop()
+        self._storage.stop()
 
         if self._thread is not None:
             self._thread.join()
@@ -90,6 +95,9 @@ class DataAcquisition:
     def _run(self):
         count = 1
         while self.running:
+            if self._skip_frame:
+                self._skip_frame = False
+                continue
             self._recorder.wait_for_new_frame()
             print(count)
             count += 1
@@ -108,7 +116,16 @@ class DataAcquisition:
         response = self._interface.get_event_confirmation()
 
         if response:
-            self._storage.store_frames(frames)
+            frames = self._recorder.frames()
+            self._storage.store_frames(frames, True)
+            self._detector.clear_history()
+            time.sleep(4)
+            frames = self._recorder.frames()
+            self._storage.store_frames(frames, False)
+        else:
+            self._detector.clear_history()
+            self._skip_frame = True
+            time.sleep(0.2)
 
 
 def main():
