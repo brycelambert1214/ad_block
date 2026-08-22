@@ -119,6 +119,19 @@ class ReplayRecorder:
         raise ex.InvalidAttributeSetting("Cannot manually"
                                          " set the running state.")
 
+    @property
+    def total_frames(self) -> int:
+        """Property for the total number of frames recorded."""
+        return self._manager.total_frames
+
+    @total_frames.setter
+    def total_frames(self, value: int) -> Exception:
+        raise ex.InvalidAttributeSetting("Cannot set the total number of"
+                                         " captured frames.")
+
+    def wait_for_new_frame(self):
+        self._manager.wait_for_new_frame()
+
     def start(self) -> None:
         """Start screen recording."""
         err = self._manager.start()

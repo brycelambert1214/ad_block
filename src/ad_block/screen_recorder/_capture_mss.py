@@ -103,12 +103,13 @@ class _CaptureMSS:
         Validate monitor index.
     """
 
-    def __init__(self,buffer: _RingBuffer):
+    def __init__(self,buffer: _RingBuffer, callback: function = None):
         self._buffer = buffer
         self._monitor_idx = None
 
         self._running = threading.Event()
         self._thread: threading.Thread | None = None
+        self._callback = callback
 
         self._monitor: dict | None = None
         self._error: Exception | None = None
@@ -131,6 +132,10 @@ class _CaptureMSS:
     def running(self) -> bool:
         """Current state of the capture thread."""
         return self._running.is_set()
+
+    @running.setter
+    def running(self, value: bool) -> Exception:
+        raise ex.InvalidAttributeSetting("Cannot set the state of running.")
 
     def _validate_monitor(self) -> None:
         """Validate the monitor index."""
@@ -186,6 +191,9 @@ class _CaptureMSS:
                     screenshot = sct.grab(self._monitor)
                     frame = np.asarray(screenshot)[:, :, :3]
                     self._buffer.add(frame)
+
+                    if self._callback is not None:
+                        self._callback()
 
         except Exception as err:
             self._error = err
